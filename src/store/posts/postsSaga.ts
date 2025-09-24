@@ -106,17 +106,14 @@ function* watchDeletePost() {
   yield takeEvery(deletePost.type, deletePostSaga)
 }
 
-
+const postsSagas = [
+  watchFetchPosts,
+  watchCreatePost,
+  watchDeletePost,
+]
 
 // Root saga
 // 使用 fork 并行启动所有 watcher sagas
 export function* postsSaga() {
-  yield all([
-    // 数据获取相关
-    fork(watchFetchPosts),
-    // 数据创建相关
-    fork(watchCreatePost),
-    // 数据删除相关
-    fork(watchDeletePost),
-  ])
+  yield all(postsSagas.map(saga => fork(saga)))
 }
