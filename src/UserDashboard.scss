@@ -1,0 +1,202 @@
+.user-dashboard {
+  padding: 0;
+  max-width: 100%;
+
+  &__title {
+    color: var(--dark-color);
+    text-align: center;
+    margin-bottom: 2rem;
+    font-size: 1.5rem;
+    font-weight: 600;
+  }
+
+  &__stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  &__controls {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    align-items: center;
+    flex-wrap: wrap;
+
+    @media (max-width: 768px) {
+      flex-direction: column;
+      align-items: stretch;
+    }
+  }
+
+  &__search {
+    flex: 1;
+    min-width: 200px;
+    // 手动应用输入框样式而不是使用 @extend
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 0.75rem;
+    font-size: 1rem;
+    transition: var(--transition);
+    width: 100%;
+
+    &:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+    }
+
+    @media (max-width: 768px) {
+      min-width: auto;
+    }
+  }
+
+  &__error {
+    margin-bottom: 1.5rem;
+  }
+
+  &__list {
+    padding: 0;
+  }
+
+  &__list-title {
+    margin-top: 0;
+    color: var(--dark-color);
+    padding-bottom: 1rem;
+    font-size: 1.25rem;
+  }
+
+  &__no-users {
+    text-align: center;
+    color: var(--gray-color);
+    font-style: italic;
+    padding: 2rem;
+  }
+}
+
+.stat-card {
+  background: linear-gradient(135deg, #6366f1, #818cf8);
+  border-radius: var(--border-radius);
+  padding: 1.5rem;
+  color: white;
+  box-shadow: var(--shadow);
+  transition: var(--transition);
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-lg);
+  }
+
+  &__title {
+    margin: 0 0 0.5rem 0;
+    font-size: 1rem;
+    font-weight: normal;
+    opacity: 0.9;
+  }
+
+  &__value {
+    margin: 0;
+    font-size: 2rem;
+    font-weight: 700;
+  }
+}
+
+.user-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.user-card {
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  padding: 1.5rem;
+  background-color: white;
+  box-shadow: var(--shadow);
+  transition: var(--transition);
+
+  &:hover {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-5px);
+  }
+
+  &__name {
+    margin: 0 0 0.5rem 0;
+    color: var(--dark-color);
+    font-size: 1.25rem;
+    font-weight: 600;
+  }
+
+  &__email {
+    margin: 0 0 1rem 0;
+    color: var(--gray-color);
+    font-size: 0.9rem;
+  }
+
+  &__actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  &__action-btn {
+    flex: 1;
+    min-width: 100px;
+  }
+}
+
+// 为按钮定义样式
+.btn {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: var(--transition);
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  min-height: 38px;
+}
+
+.btn:hover:not(:disabled) {
+  background-color: var(--primary-dark);
+  transform: translateY(-2px);
+}
+
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-secondary {
+  background-color: white;
+  color: var(--primary-color);
+  border: 1px solid var(--primary-color);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background-color: #f1f5ff;
+}
+
+.user-card__action-btn--delete {
+  background-color: #ef4444;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: var(--transition);
+  font-weight: 500;
+}
+
+.user-card__action-btn--delete:hover:not(:disabled) {
+  background-color: #dc2626;
+}
