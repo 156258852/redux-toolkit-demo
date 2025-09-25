@@ -9,8 +9,8 @@ const UserDashboard: React.FC = () => {
   const dispatch = useAppDispatch()
 
   // 使用 selectors 获取状态
-  const loading = useAppSelector((state) => state.user.loading)
-  const error = useAppSelector((state) => state.user.error)
+  const loading = useAppSelector((state) => state.user.fetchLoading)
+  const error = useAppSelector((state) => state.user.fetchError)
 
   // 使用自定义 selectors
   const [searchTerm, setSearchTerm] = useState('')

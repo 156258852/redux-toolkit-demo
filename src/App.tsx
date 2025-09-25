@@ -12,10 +12,10 @@ import UserDashboard from './UserDashboard.tsx'
 
 function App() {
   const count = useAppSelector((state) => state.counter.value)
-  const loading = useAppSelector((state) => state.counter.loading)
+  const loading = useAppSelector((state) => state.counter.asyncIncrementLoading)
   const users = useAppSelector((state) => state.user.users)
-  const userLoading = useAppSelector((state) => state.user.loading)
-  const userError = useAppSelector((state) => state.user.error)
+  const userLoading = useAppSelector((state) => state.user.fetchLoading)
+  const userError = useAppSelector((state) => state.user.fetchError)
 
   const dispatch = useAppDispatch()
   const [incrementAmount, setIncrementAmount] = useState('2')
@@ -39,7 +39,10 @@ function App() {
         <h2>Counter</h2>
         <div className="counter-display">{count}</div>
         <div className="counter-controls">
-          <button className="btn btn-secondary" onClick={() => dispatch(decrement())}>
+          <button className="btn btn-secondary" onClick={() =>
+            dispatch(decrement())
+
+          }>
             Decrement
           </button>
           <button className="btn btn-secondary" onClick={() => dispatch(increment())}>
@@ -62,7 +65,14 @@ function App() {
           </button>
           <button
             className="btn btn-success"
-            onClick={() => dispatch(incrementAsync(incrementValue))}
+            onClick={() =>
+              dispatch(incrementAsync(incrementValue))
+                .unwrap()
+                .then((res) => {
+                  console.log('🚀 >>> res', res)
+                })
+                .catch(() => alert('Async increment failed'))
+            }
             disabled={loading}
           >
             {loading ? 'Loading...' : 'Add Async'}

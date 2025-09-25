@@ -1,8 +1,13 @@
 import { createAsyncThunk } from '@reduxjs/toolkit'
 
+// 定义 thunk 名称常量
+const THUNK_NAMES = {
+  incrementAsync: 'counter/incrementAsync',
+}
+
 // 异步 thunk，模拟异步增加操作
 export const incrementAsync = createAsyncThunk(
-  'counter/incrementAsync',
+  THUNK_NAMES.incrementAsync,
   async (amount: number) => {
     // 模拟异步操作
     await new Promise(resolve => setTimeout(resolve, 1000))

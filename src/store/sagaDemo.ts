@@ -3,7 +3,7 @@
  * 展示各种 Redux-Saga API 的用法和作用
  */
 
-import { call, put, takeEvery, takeLatest, all, fork, take, select, race, delay } from 'redux-saga/effects'
+import { call, put, takeEvery, takeLatest, all, fork, take, delay } from 'redux-saga/effects'
 import { createAction, createSlice } from '@reduxjs/toolkit'
 
 // ==================== 1. 演示用的 Action 和 State ====================
@@ -13,23 +13,23 @@ const demoActions = {
   // takeEvery 相关
   triggerTakeEvery: createAction<number>('sagaDemo/triggerTakeEvery'),
   takeEveryResult: createAction<string>('sagaDemo/takeEveryResult'),
-  
+
   // takeLatest 相关
   triggerTakeLatest: createAction<number>('sagaDemo/triggerTakeLatest'),
   takeLatestResult: createAction<string>('sagaDemo/takeLatestResult'),
-  
+
   // take 相关
   triggerTake: createAction<void>('sagaDemo/triggerTake'),
   takeResult: createAction<string>('sagaDemo/takeResult'),
-  
+
   // select 相关
   triggerSelect: createAction<void>('sagaDemo/triggerSelect'),
   selectResult: createAction<string>('sagaDemo/selectResult'),
-  
+
   // race 相关
   triggerRace: createAction<void>('sagaDemo/triggerRace'),
   raceResult: createAction<string>('sagaDemo/raceResult'),
-  
+
   // all 相关
   triggerAll: createAction<void>('sagaDemo/triggerAll'),
   allResult: createAction<string>('sagaDemo/allResult'),
@@ -73,7 +73,43 @@ const sagaDemoSlice = createSlice({
       state.raceResults = []
       state.allResults = []
     },
-    ...demoActions
+    // 手动添加 actions 作为 reducers
+    triggerTakeEvery: () => {
+      // 这个 action 由 saga 监听，不需要在这里做任何事情
+    },
+    takeEveryResult: (state, action) => {
+      state.takeEveryResults.push(action.payload)
+    },
+    triggerTakeLatest: () => {
+      // 这个 action 由 saga 监听，不需要在这里做任何事情
+    },
+    takeLatestResult: (state, action) => {
+      state.takeLatestResults.push(action.payload)
+    },
+    triggerTake: () => {
+      // 这个 action 由 saga 监听，不需要在这里做任何事情
+    },
+    takeResult: (state, action) => {
+      state.takeResults.push(action.payload)
+    },
+    triggerSelect: () => {
+      // 这个 action 由 saga 监听，不需要在这里做任何事情
+    },
+    selectResult: (state, action) => {
+      state.selectResults.push(action.payload)
+    },
+    triggerRace: () => {
+      // 这个 action 由 saga 监听，不需要在这里做任何事情
+    },
+    raceResult: (state, action) => {
+      state.raceResults.push(action.payload)
+    },
+    triggerAll: () => {
+      // 这个 action 由 saga 监听，不需要在这里做任何事情
+    },
+    allResult: (state, action) => {
+      state.allResults.push(action.payload)
+    }
   }
 })
 
@@ -84,49 +120,16 @@ export default sagaDemoSlice.reducer
 // ==================== 2. 模拟 API 函数 ====================
 
 // 模拟一个异步 API 调用
-function* mockApiCall(id: number, delayMs: number = 1000): Generator<any, string, any> {
+function* mockApiCall(id: number, delayMs: number = 1000): Generator<unknown, string, unknown> {
   yield delay(delayMs)
   return `API Result for ID: ${id} (delay: ${delayMs}ms)`
 }
 
-// 快速 API 调用
-function* fastApiCall(): Generator<any, string, any> {
-  yield delay(500)
-  return "Fast API Result"
-}
 
-// 慢速 API 调用
-function* slowApiCall(): Generator<any, string, any> {
-  yield delay(2000)
-  return "Slow API Result"
-}
 
 // ==================== 3. Redux-Saga API 演示 ====================
 
-/**
- * 1. call API
- * 作用：用于调用函数，可以是普通函数或返回 Promise 的函数
- * 特点：阻塞调用，Saga 会等待函数执行完成后再继续执行
- */
-function* callDemoSaga() {
-  try {
-    console.log('开始调用 API')
-    const result: string = yield call(mockApiCall, 1, 1000)
-    console.log('API 调用完成:', result)
-  } catch (error) {
-    console.error('API 调用失败:', error)
-  }
-}
 
-/**
- * 2. put API
- * 作用：用于 dispatch 一个 action 到 store
- * 特点：类似于 Redux 中的 dispatch 函数
- */
-function* putDemoSaga() {
-  yield put(incrementCounter())
-  console.log('已发送 incrementCounter action')
-}
 
 /**
  * 3. takeEvery API
@@ -139,8 +142,8 @@ function* takeEveryWorker(action: ReturnType<typeof demoActions.triggerTakeEvery
     const result: string = yield call(mockApiCall, action.payload, 2000)
     yield put(demoActions.takeEveryResult(result))
     console.log(`takeEveryWorker 完成处理 ID: ${action.payload}`)
-  } catch (error: any) {
-    console.error('takeEveryWorker 错误:', error.message)
+  } catch (error: unknown) {
+    console.error('takeEveryWorker 错误:', error instanceof Error ? error.message : 'Unknown error')
   }
 }
 
@@ -160,8 +163,8 @@ function* takeLatestWorker(action: ReturnType<typeof demoActions.triggerTakeLate
     const result: string = yield call(mockApiCall, action.payload, 3000 - action.payload * 500)
     yield put(demoActions.takeLatestResult(result))
     console.log(`takeLatestWorker 完成处理 ID: ${action.payload}`)
-  } catch (error: any) {
-    console.error('takeLatestWorker 错误:', error.message)
+  } catch (error: unknown) {
+    console.error('takeLatestWorker 错误:', error instanceof Error ? error.message : 'Unknown error')
   }
 }
 
@@ -182,83 +185,15 @@ function* takeSaga() {
   console.log('takeSaga 完成')
 }
 
-/**
- * 6. select API
- * 作用：从 Redux store 中获取 state
- * 特点：类似于 React-Redux 中的 useSelector 或 store.getState()
- */
-function* selectSaga() {
-  // 获取整个 state
-  const state: SagaDemoState = yield select((state: any) => state.sagaDemo)
-  console.log('完整状态:', state)
-  
-  // 获取特定值
-  const counter: number = yield select((state: any) => state.sagaDemo.counter)
-  console.log('计数器值:', counter)
-  
-  const result = `Counter value is ${counter}`
-  yield put(demoActions.selectResult(result))
-}
 
-/**
- * 7. race API
- * 作用：同时运行多个 effects，当其中一个完成或失败时，取消其他 effects
- * 特点：类似于 Promise.race
- */
-function* raceSaga() {
-  console.log('开始 race 竞争')
-  const result = yield race({
-    fast: call(fastApiCall),
-    slow: call(slowApiCall)
-  })
-  
-  console.log('race 结果:', result)
-  const raceResult = result.fast 
-    ? `快速 API 获胜: ${result.fast}` 
-    : `慢速 API 获胜: ${result.slow}`
-    
-  yield put(demoActions.raceResult(raceResult))
-}
+
+
 
 /**
  * 8. all API
  * 作用：并行运行多个 effects，等待所有 effects 完成
  * 特点：类似于 Promise.all
  */
-function* allSaga() {
-  console.log('开始并行执行多个任务')
-  const results = yield all([
-    call(mockApiCall, 1, 500),
-    call(mockApiCall, 2, 800),
-    call(mockApiCall, 3, 300)
-  ])
-  
-  console.log('所有任务完成:', results)
-  const allResult = `All results: ${results.join(', ')}`
-  yield put(demoActions.allResult(allResult))
-}
-
-/**
- * 9. fork API
- * 作用：非阻塞地调用 saga
- * 特点：不会等待 saga 完成，立即继续执行下一行代码
- */
-function* forkWorker(name: string) {
-  console.log(`forkWorker ${name} 开始`)
-  yield delay(2000)
-  console.log(`forkWorker ${name} 完成`)
-}
-
-function* forkSaga() {
-  console.log('开始 fork 演示')
-  // 非阻塞调用 - 不会等待完成
-  yield fork(forkWorker, 'A')
-  yield fork(forkWorker, 'B')
-  console.log('fork 调用已完成（但工作可能仍在运行）')
-  
-  // 为了演示效果，等待一段时间
-  yield delay(2500)
-}
 
 // ==================== 4. 根 Saga ====================
 

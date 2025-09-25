@@ -3,13 +3,23 @@ import { useAppSelector, useAppDispatch } from './store/hooks.ts'
 import {
   fetchPosts,
   createPost,
-  deletePost
+  deletePost,
+  fetchPostsWithRelated
 } from './store/posts/postsSlice.ts'
 import type { Post } from './store/types'
 
+
 const Posts: React.FC = () => {
   const dispatch = useAppDispatch()
-  const { posts, loading, error } = useAppSelector((state) => state.posts)
+  const { posts } = useAppSelector((state) => state.posts)
+  // 为不同的操作使用独立的 loading 和 error 状态
+  const fetchLoading = useAppSelector((state) => state.posts.fetchLoading)
+  const createLoading = useAppSelector((state) => state.posts.createLoading)
+  const deleteLoading = useAppSelector((state) => state.posts.deleteLoading)
+  const fetchError = useAppSelector((state) => state.posts.fetchError)
+  const createError = useAppSelector((state) => state.posts.createError)
+  const deleteError = useAppSelector((state) => state.posts.deleteError)
+
 
   const [title, setTitle] = useState('')
   const [body, setBody] = useState('')
@@ -30,17 +40,27 @@ const Posts: React.FC = () => {
     dispatch(deletePost(id))
   }
 
+  // 新增：处理并行获取文章和相关数据
+  const handleFetchPostsWithRelated = () => {
+    dispatch(fetchPostsWithRelated())
+  }
+
   return (
     <div>
       <h2>Posts (using Redux-Saga)</h2>
 
       <div className="counter-controls" style={{ marginBottom: '1.5rem' }}>
-        <button className="btn" onClick={handleFetchPosts} disabled={loading}>
-          {loading ? 'Loading...' : 'Fetch Posts'}
+        <button className="btn" onClick={handleFetchPosts} disabled={fetchLoading}>
+          {fetchLoading ? 'Loading...' : 'Fetch Posts'}
+        </button>
+        <button className="btn" onClick={handleFetchPostsWithRelated} disabled={fetchLoading}>
+          {fetchLoading ? 'Loading...' : 'Fetch Posts with Related Data'}
         </button>
       </div>
 
-      {error && <div className="error">Error: {error}</div>}
+      {fetchError && <div className="error">Error: {fetchError}</div>}
+      {createError && <div className="error">Error: {createError}</div>}
+      {deleteError && <div className="error">Error: {deleteError}</div>}
 
       <div className="input-group">
         <input
@@ -57,7 +77,9 @@ const Posts: React.FC = () => {
           className="input"
           rows={3}
         />
-        <button className="btn btn-success" onClick={handleCreatePost}>Create Post</button>
+        <button className="btn btn-success" onClick={handleCreatePost} disabled={createLoading}>
+          {createLoading ? 'Creating...' : 'Create Post'}
+        </button>
       </div>
 
       <div>
@@ -68,7 +90,9 @@ const Posts: React.FC = () => {
             <p>{post.body}</p>
             <div className="btn-group">
               <button className="btn btn-sm btn-secondary">Edit</button>
-              <button className="btn btn-sm" onClick={() => handleDeletePost(post.id)}>Delete</button>
+              <button className="btn btn-sm" onClick={() => handleDeletePost(post.id)} disabled={deleteLoading}>
+                {deleteLoading ? 'Deleting...' : 'Delete'}
+              </button>
             </div>
           </div>
         ))}
